@@ -38,5 +38,3 @@ The infrastructure directory may contain various configuration files depending o
 main.tf: Defines the overall infrastructure layout and references other configuration files.
 virtual_machines.tf: Defines virtual machine configurations (size, image, etc.).
 networking.tf: Defines network resources (VPNs, subnets, etc.).
-
-
