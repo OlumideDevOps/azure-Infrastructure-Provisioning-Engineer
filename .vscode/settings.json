@@ -1,3 +1,4 @@
 {
-    "azureAutomation.directory.basePath": ""
+    "azureAutomation.directory.basePath": "",
+    "DockerRun.DisableDockerrc": true
 }
