@@ -25,12 +25,17 @@ Deployment Steps:
 Initialize Terraform:
 
 cd infrastructure
+
 terraform init
+
 terraform validate
 
-
 terraform plan
+
 terraform apply
+
+
+
 Example Configuration Files:
 
 The infrastructure directory may contain various configuration files depending on your specific infrastructure needs. Here's a generic example structure:
