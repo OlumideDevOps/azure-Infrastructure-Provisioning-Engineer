@@ -33,20 +33,32 @@ resource "random_pet" "prefix" {
   length = 1
 }
 
+resource "azurerm_network_interface" "my_terraform_nic" {
+    name = "my_terraform_nic-${count.index + 1}"
+    location = azurerm_resource_group.rg.location
+    resource_group_name = azurerm_resource_group.rg.name
+    count = 3
+    ip_configuration {
+      name = "ipconfig-${count.index + 1}"
+      subnet_id = azurerm_subnet.my_terraform_subnet_1.id
+      private_ip_address_allocation = "Dynamic"
+    }
+}
 resource "azurerm_network_security_group" "web_nsg" {
-  name                 = "web-nsg"
-  location            = azurerm_virtual_network.main.location
-  resource_group_name = azurerm_virtual_network.main.resource_group_name
+  name                = "web-nsg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  count               = 3
 
   security_rule {
   name = "allow_http"
   priority = 100
   direction = "Inbound"
   source_address_prefix = "*"  # Allow from anywhere for now (adjust later for security)
-  destination_address_prefix = azurerm_subnet.web_subnet.address_prefixes[0]  # Allow traffic to web subnet
+  destination_address_prefix = azurerm_subnet.my_terraform_subnet_1.address_prefixes[0]  # Allow traffic to web subnet
   destination_port_range = "80"
   protocol = "Tcp"
-  network_security_group_id = azurerm_network_security_group.web_nsg.id
+  //network_security_group_id = azurerm_network_security_group.web_nsg.id
   access = "Allow"
   }
 
@@ -58,7 +70,7 @@ resource "azurerm_network_security_group" "web_nsg" {
   destination_address_prefix = azurerm_subnet.web_subnet.address_prefixes[0]  # Allow traffic to web subnet
   destination_port_range = "443"
   protocol = "Tcp"
-  network_security_group_id = azurerm_network_security_group.web_nsg.id
+  //network_security_group_id = azurerm_network_security_group.web_nsg.id
   access = "Allow"
   }
 
@@ -66,8 +78,8 @@ resource "azurerm_network_security_group" "web_nsg" {
 
 resource "azurerm_network_security_group" "db_nsg" {
   name                = "db-nsg"
-  location            = azurerm_virtual_network.main.location
-  resource_group_name = azurerm_virtual_network.main.resource_group_name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
   security_rule  {
   name = "allow_sql"
@@ -77,14 +89,15 @@ resource "azurerm_network_security_group" "db_nsg" {
   destination_address_prefix = azurerm_subnet.db_subnet.address_prefixes[0]  # Allow traffic to database subnet
   destination_port_range = "1433"
   protocol = "Tcp"
-  network_security_group_id = azurerm_network_security_group.db_nsg.id
+  //network_security_group_id = azurerm_network_security_group.db_nsg.id
   access = "Allow"
   }
 }
 
-resource "azurerm_subnet_network_security_group_association" "example" {
-  subnet_id                 = azurerm_subnet.example.id
-  network_security_group_id = azurerm_network_security_group.example.id
+resource "azurerm_subnet_network_security_group_association" "my_terraform_nsg" {
+  subnet_id                 = azurerm_subnet.my_terraform_subnet_1.id
+  network_security_group_id = azurerm_network_security_group.web_nsg.id
+
 }
 
 resource "azurerm_public_ip" "my_terraform_public_ip" {

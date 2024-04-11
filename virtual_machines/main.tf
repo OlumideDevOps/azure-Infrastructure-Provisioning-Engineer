@@ -1,6 +1,7 @@
 # Create virtual machine
 resource "azurerm_windows_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
+  count                 = 2
+  name                  = "${var.prefix}-vm-${count.index}"
   admin_username        = "azureuser"
   admin_password        = random_password.password.result
   location              = azurerm_resource_group.rg.location
@@ -9,9 +10,10 @@ resource "azurerm_windows_virtual_machine" "main" {
   size                  = "Standard_D2S_v3"
 
   os_disk {
-    name                 = "myOsDisk"
+    name                 = "myOsDisk-${count.index}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_SSD"
+    disk_size_gb         = "128"
   }
 
   source_image_reference {
@@ -65,4 +67,25 @@ resource "random_password" "password" {
 resource "random_pet" "prefix" {
   prefix = var.prefix
   length = 1
+}
+
+data "azurerm_virtual_machine" "example" {
+  name                = "example-vm"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_mssql_virtual_machine" "example" {
+  virtual_machine_id               = data.azurerm_virtual_machine.example.id
+  sql_license_type                 = var.sql_license
+  r_services_enabled               = true
+  sql_connectivity_port            = var.sql_port
+  sql_connectivity_type            = "PRIVATE"
+  sql_connectivity_update_password = var.sql_password
+  sql_connectivity_update_username = var.sql_username
+
+  auto_patching {
+    day_of_week                            = "Sunday"
+    maintenance_window_duration_in_minutes = 60
+    maintenance_window_starting_hour       = 2
+  }
 }

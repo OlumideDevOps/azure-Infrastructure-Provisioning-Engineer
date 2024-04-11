@@ -1,12 +1,12 @@
 module "network" {
   source  = "./network"
 
-  tracing_tags_enabled = true
+  //tracing_tags_enabled = true
 }
 
 module "virtual_machines" {
   source  = "./virtual_machines"
-  subnet_id = module.network.web_subnet_id
+//subnet_id = module.network.web_subnet_id
 }
 
 module "load_balancer" {
