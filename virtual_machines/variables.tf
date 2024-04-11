@@ -27,3 +27,18 @@ variable "sql_port" {
   type        = string
   default     =  "1433"
 }
+
+variable "account_tier" {
+  type = string
+  default = "Standard"
+}
+
+variable "account_replication_type" {
+  type = string
+  default = "LRS"
+}
+
+variable "storage_account_name" {
+  type = string
+  default = "mystorage"
+}

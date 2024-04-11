@@ -72,6 +72,7 @@ resource "random_pet" "prefix" {
 data "azurerm_virtual_machine" "example" {
   name                = "example-vm"
   resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.rg.location
 }
 
 resource "azurerm_mssql_virtual_machine" "example" {
@@ -88,4 +89,13 @@ resource "azurerm_mssql_virtual_machine" "example" {
     maintenance_window_duration_in_minutes = 60
     maintenance_window_starting_hour       = 2
   }
+}
+
+resource "azurerm_storage_account" "my_terraform_storage" {
+    name                     = var.storage_account_name
+    resource_group_name      = azurerm_resource_group.rg.name
+    location                 = azurerm_resource_group.rg.location
+    account_tier             = var.account_tier
+    account_replication_type = var.account_replication_type
+
 }

@@ -22,3 +22,7 @@ module "application_gateway" {
 module "sql_database" {
   source = "./sql_database"
 }
+
+module "backup" {
+  source = "./backup"
+}

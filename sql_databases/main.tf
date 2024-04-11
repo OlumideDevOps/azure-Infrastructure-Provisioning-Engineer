@@ -2,11 +2,6 @@ resource "random_pet" "rg_name" {
   prefix = var.resource_group_name_prefix
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = random_pet.rg_name.id
-  location = var.resource_group_location
-}
-
 resource "random_pet" "azurerm_mssql_server_name" {
   prefix = "sql"
 }
@@ -37,4 +32,16 @@ resource "azurerm_mssql_server" "server" {
 resource "azurerm_mssql_database" "db" {
   name      = var.sql_db_name
   server_id = azurerm_mssql_server.server.id
+  collation = "SQL_Latin1_General_CP1_CI_AS"
+  license_type = "LicenseIncluded"
+  max_size_gb = 4
+  read_scale =  true
+  sku_name =  "SO"
+  zone_redundant = true
+  enclave_type = "VBS"
+
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
